@@ -52,6 +52,7 @@ static uint8_t      osd_home_direction;             // arrow direction pointing 
 // OpenPilot UAVTalk:
 static uint8_t      op_uavtalk_mode = 0;            // OP UAVTalk mode, start with normal behavior
 static uint8_t      op_alarm = 0;                   // OP alarm info
+static uint8_t      stab_alarm = 0;                 // OP stabilization alarm info
 static uint8_t      osd_armed = 0;                  // OP armed info
 static uint8_t      osd_time_hour = 0;              // OP GPS time hour info
 static uint8_t      osd_time_minute = 0;            // OP GPS tiem minute info
@@ -69,7 +70,6 @@ static int          curr_amp_offset = 0;            // Ampere * 10000
 static uint16_t     osd_total_A = 0;                // Battery total current [mAh]
 // Flight Batt on Revo
 static uint16_t     osd_est_flight_time = 0;        // Battery estimated flight time [sec]
-
 
 // Panel BIT registers
 byte panA_REG[npanels] = {0b00000000};
@@ -138,4 +138,3 @@ static uint16_t     osd_chan5_raw = 1000;
 static uint16_t     osd_chan6_raw = 1000;
 static uint16_t     osd_chan7_raw = 1000;
 static uint16_t     osd_chan8_raw = 1000;
-

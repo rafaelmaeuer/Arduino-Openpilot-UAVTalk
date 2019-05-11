@@ -94,6 +94,8 @@ void loop() {
         Serial.print("osd_armed "); Serial.println(osd_armed);
         Serial.print("osd_mode "); Serial.println(osd_mode); 
         Serial.print("gcstelemetrystatus "); Serial.println(gcstelemetrystatus);
+        // Serial.print("op_alarm "); Serial.println(op_alarm); 
+        Serial.print("stab_alarm "); Serial.println(stab_alarm); 
       }
       
       break;
@@ -170,4 +172,3 @@ void setLedOutputs() {
      ring.setPixelColor(3, LAVENDER); // 
    }  
 }
-

@@ -440,6 +440,7 @@ int uavtalk_read(uavtalk_message_t *msg) {
 #endif
 #ifdef OP_DEBUG
 				case SYSTEMALARMS_OBJID:
+					stab_alarm = msg->Data[SYSTEMALARMS_ALARM_STABILIZATION];
 #ifdef VERSION_ADDITIONAL_UAVOBJID
 				case SYSTEMALARMS_OBJID_001:
 				case SYSTEMALARMS_OBJID_002:
@@ -484,4 +485,3 @@ int uavtalk_state(void)
 }
 
 #endif // PROTOCOL_UAVTALK
-
