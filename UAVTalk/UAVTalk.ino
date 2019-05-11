@@ -447,13 +447,13 @@ int uavtalk_read(uavtalk_message_t *msg) {
 				case SYSTEMALARMS_OBJID_004:
 				case SYSTEMALARMS_OBJID_005:
 #endif
-					op_alarm  = msg->Data[SYSTEMALARMS_ALARM_CPUOVERLOAD];
-//					op_alarm += msg->Data[SYSTEMALARMS_ALARM_EVENTSYSTEM] * 0x10;
+					op_alarm = msg->Data[SYSTEMALARMS_ALARM_CPUOVERLOAD];
+					// op_alarm += msg->Data[SYSTEMALARMS_ALARM_EVENTSYSTEM] * 0x10;
 					op_alarm += msg->Data[SYSTEMALARMS_ALARM_MANUALCONTROL] * 0x10;
 					if (op_alarm > 0x11) show_prio_info = 1;
 				break;
 #endif
-				
+
 				// TODO implement more X_OBJID for more OSD data 
 				// osd_waypoint_seq = 0;           // waypoint sequence
 				// osd_airspeed = 0;               // air speed (only with pitot tube)

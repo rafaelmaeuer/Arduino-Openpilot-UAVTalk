@@ -46,7 +46,7 @@
 //#define JR_SPECIALS
 
 // JRChange: OP debug
-//#define OP_DEBUG
+#define OP_DEBUG
 
 // JRChange: GPS simulation
 //#define GPS_SIMULATION
