@@ -2,7 +2,7 @@
 #include <Adafruit_NeoPixel.h>
 
 #define PIN 4
-#define PIXEL 16
+#define PIXEL 1
 #define INIT_SHOWCOLOUR_TIME 500
 #define BAUDRATE 57600
 #define LED_FREQUENZ 50  // 50HZ
@@ -88,10 +88,13 @@ void loop() {
         nextLEDTime = millis() + 1000 / LED_FREQUENZ;
       }
 
-//      if (millis() > nextObjTime) {
-//        uavtalk_request_object(FLIGHTSTATUS_OBJID_005);
-//        nextObjTime = millis() + 1000;
-//      }
+      if (millis() > nextObjTime) {
+        uavtalk_request_object(FLIGHTSTATUS_OBJID_005);
+        nextObjTime = millis() + 1000;
+        Serial.print("osd_armed "); Serial.println(osd_armed);
+        Serial.print("osd_mode "); Serial.println(osd_mode); 
+        Serial.print("gcstelemetrystatus "); Serial.println(gcstelemetrystatus);
+      }
       
       break;
    }
