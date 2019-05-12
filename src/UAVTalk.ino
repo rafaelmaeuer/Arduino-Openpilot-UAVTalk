@@ -6,13 +6,16 @@
 #define UAV_FREQUENCY 100 // (HZ)
 #define LED_UPDATE 100 // (HZ)
 
-#define PIN 4
-#define PIXEL 1
-#define INIT_SHOWCOLOUR_TIME 500
-#define LED_FREQUENZ 50  // 50HZ
-#define LED_BRIGHTNESS 32 // 0 (min) - 255 (max)
+#define POWER_LED 2
+#define FLIGHT_LED 3
+#define STATUS_LED 4
 
-Adafruit_NeoPixel ring = Adafruit_NeoPixel(PIXEL, PIN, NEO_GRB + NEO_KHZ800);
+#define PIXEL 1
+#define LED_INTERVAL 250
+#define LED_FREQUENZ 50  // 50HZ
+#define LED_BRIGHTNESS 10 // 0 (min) - 255 (max)
+
+Adafruit_NeoPixel ring = Adafruit_NeoPixel(PIXEL, STATUS_LED, NEO_GRB + NEO_KHZ800);
 
 bool debug = true;
 
@@ -38,13 +41,15 @@ const uint32_t BLACK = ring.Color(0,0,0);
 long nextLEDTime = 0;
 long nextObjTime = 0;
 
+int ledState = LOW; // ledState used to set the LED
+int ledMode = 0; // set LED mode (0:off, 1:blink, 2:on)
+unsigned long previousMillis = 0; // will store last time LED was updated
+
 void setup() {
   Serial.begin(BAUDRATE); // serial on USB
   Serial1.begin(BAUDRATE); // serial on 0(RX) and 1(TX)
-  ring.begin();
-  ring.show(); // Initialize all pixels to 'off'
-  ring.setBrightness(LED_BRIGHTNESS);
-  checkLeds();
+  setupLEDs();
+  initLEDs();
  }
 
 void loop() {
@@ -72,6 +77,7 @@ void serialEvent1(){
 }
 
 void printLogs() {
+  Serial.println("");
   Serial.print("osd_armed "); Serial.println(osd_armed);
   Serial.print("osd_mode "); Serial.println(osd_mode); 
   Serial.print("gcstelemetrystatus "); Serial.println(gcstelemetrystatus);
@@ -79,18 +85,54 @@ void printLogs() {
   Serial.print("stab_alarm "); Serial.println(stab_alarm); 
 }
 
-void checkLeds() {
-  setAllLeds(RED);
+void setupLEDs() {
+  ring.begin();
+  ring.show(); // Initialize all pixels to 'off'
+  ring.setBrightness(LED_BRIGHTNESS);
+
+  pinMode(POWER_LED, OUTPUT);
+  pinMode(FLIGHT_LED, OUTPUT);
+}
+
+void initLEDs() {
+  LEDon(POWER_LED);
+  LEDon(FLIGHT_LED);
+  setAllLeds(WHITE);
   ring.show();
-  delay(INIT_SHOWCOLOUR_TIME);
-  setAllLeds(GREEN);
-  ring.show();
-  delay(INIT_SHOWCOLOUR_TIME);
-  setAllLeds(BLUE);
-  ring.show();
-  delay(INIT_SHOWCOLOUR_TIME);
+  delay(LED_INTERVAL * 2);
+  LEDoff(POWER_LED);
+  LEDoff(FLIGHT_LED);
   setAllLeds(BLACK);
   ring.show();
+  delay(LED_INTERVAL);
+}
+
+void LEDon(int LED) {
+  digitalWrite(LED, HIGH);
+}
+
+void LEDoff(int LED) {
+  digitalWrite(LED, LOW);
+}
+
+void LEDblink(int LED, int interval) {
+  // check to see if it's time to blink the LED; that is, if the difference
+  // between the current time and last time you blinked the LED is bigger than
+  // the interval at which you want to blink the LED.
+  unsigned long currentMillis = millis();
+
+  if (currentMillis - previousMillis >= interval) {
+    previousMillis = currentMillis; // save the last time you blinked the LED
+
+    // if the LED is off turn it on and vice-versa:
+    if (ledState == LOW) {
+      ledState = HIGH;
+      LEDon(LED);
+    } else {
+      ledState = LOW;
+      LEDoff(LED);
+    }
+  }
 }
 
 void setAllLeds(unsigned long new_color) {
@@ -100,17 +142,36 @@ void setAllLeds(unsigned long new_color) {
 }
 
 void setLedOutputs() {
-   // armed
-   if (osd_armed == 1) { // seems, that messages are sent only once on state-change "event"
-                         // and that these onetime-messages get lost sometimes (same behavior seen at flight mode "osd_mode")
-                         // Flight Telemetry Update Period can be set in GCS (Default for armend: 5000ms)
-                         // UPDATE: Changed to 500ms. But this led is not working reliable... grrr
-     ring.setPixelColor(0, DARK_YELLOW); // arming = DARK_YELLOW
-   } else if (osd_armed == 2) {
-     ring.setPixelColor(0, RED); // armed = RED
-   } else {
-     ring.setPixelColor(0, BLACK);
-   }
+
+  // stabilization
+  if (stab_alarm == 3 && osd_armed == 0) {
+    LEDblink(POWER_LED, LED_INTERVAL);
+  } else {
+    LEDon(POWER_LED);
+  }
+
+  // armed
+  switch (osd_armed) {
+    case 2:
+      LEDon(FLIGHT_LED);
+      break;
+    case 1:
+      LEDblink(FLIGHT_LED, LED_INTERVAL * 0.5);
+      break;
+    default:
+      LEDoff(FLIGHT_LED);
+  }
+
+  //  if (osd_armed == 1) { // seems, that messages are sent only once on state-change "event"
+  //                        // and that these onetime-messages get lost sometimes (same behavior seen at flight mode "osd_mode")
+  //                        // Flight Telemetry Update Period can be set in GCS (Default for armend: 5000ms)
+  //                        // UPDATE: Changed to 500ms. But this led is not working reliable... grrr
+  //    ring.setPixelColor(0, DARK_YELLOW); // arming = DARK_YELLOW
+  //  } else if (osd_armed == 2) {
+  //    ring.setPixelColor(0, RED); // armed = RED
+  //  } else {
+  //    ring.setPixelColor(0, BLACK);
+  //  }
 
    // yaw
    uint32_t value = (osd_yaw + 180) * 25 / 36; // 0 - 255
