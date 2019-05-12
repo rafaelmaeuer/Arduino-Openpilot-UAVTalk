@@ -1,21 +1,21 @@
 #include "UAVTalk.h"
 #include <Adafruit_NeoPixel.h>
 
+#define BAUDRATE 57600
+#define UAV_FREQUENCY 100 // (HZ)
+#define LED_UPDATE 100 // (HZ)
+
 #define PIN 4
 #define PIXEL 1
 #define INIT_SHOWCOLOUR_TIME 500
-#define BAUDRATE 57600
 #define LED_FREQUENZ 50  // 50HZ
+#define LED_BRIGHTNESS 32 // 0 (min) - 255 (max)
 
 Adafruit_NeoPixel ring = Adafruit_NeoPixel(PIXEL, PIN, NEO_GRB + NEO_KHZ800);
 
-enum state {
-  stopped,
-  checking_leds,
-  running_leds
-};
+bool debug = true;
 
-state main_state = stopped;
+static uavtalk_message_t msg;
 
 const uint32_t RED = ring.Color(255, 0, 0);
 const uint32_t GREEN = ring.Color(0, 255, 0);
@@ -24,7 +24,8 @@ const uint32_t MAGENTA = ring.Color(255, 0, 255);
 const uint32_t YELLOW = ring.Color(255, 255, 0);
 const uint32_t DARK_YELLOW = ring.Color(155, 155, 0);
 const uint32_t PINK = ring.Color(219,112,147);
-const uint32_t SKY_BLUE = ring.Color(135,206,255);const uint32_t MAIZE = ring.Color(128,158,10);
+const uint32_t SKY_BLUE = ring.Color(135,206,255);
+const uint32_t MAIZE = ring.Color(128,158,10);
 const uint32_t LAVENDER = ring.Color(88,2,163);
 const uint32_t SEA_FOAM = ring.Color(32,178,170);
 const uint32_t SPleds = ring.Color(102,205,0);
@@ -41,69 +42,24 @@ void setup() {
   Serial1.begin(BAUDRATE); // serial on 0(RX) and 1(TX)
   ring.begin();
   ring.show(); // Initialize all pixels to 'off'
-  ring.setBrightness(100);
+  ring.setBrightness(LED_BRIGHTNESS);
   checkLeds();
-  main_state = running_leds;
  }
 
-bool a = true;
-
 void loop() {
-   
-   switch (main_state) {
-    case running_leds:
-//      if (duration > 2000) {
-//        ring.setPixelColor(6, BLACK);
-//        ring.setPixelColor(7, BLACK);
-//        ring.setPixelColor(5, RED);
-//      } else if (duration > 1000) {
-//        ring.setPixelColor(6, BLACK);
-//        ring.setPixelColor(7, BLACK);
-//        ring.setPixelColor(5, GREEN);
-//      } else if (duration > 700) {
-//        ring.setPixelColor(6, BLACK);
-//        ring.setPixelColor(7, BLACK);
-//        ring.setPixelColor(5, BLUE);
-//      } else if (duration > 500) {
-//        ring.setPixelColor(5, BLACK);
-//        ring.setPixelColor(7, BLACK);
-//        ring.setPixelColor(6, RED); //!!!
-//      } else if (duration > 300) {
-//        ring.setPixelColor(5, BLACK);
-//        ring.setPixelColor(7, BLACK);
-//        ring.setPixelColor(6, GREEN);
-//      } else if (duration >  100) {
-//        ring.setPixelColor(5, BLACK);
-//        ring.setPixelColor(7, BLACK);
-//        ring.setPixelColor(6, BLUE);
-//      } else {
-//        ring.setPixelColor(5, BLACK);
-//        ring.setPixelColor(6, BLACK);
-//        ring.setPixelColor(7, RED);
-//      }
+  if (millis() > nextLEDTime) {
+    setLedOutputs();
+    ring.show();
+    nextLEDTime = millis() + LED_UPDATE; // LED udpate frequency;
+  }
 
-      
-      if (millis() > nextLEDTime) {
-        setLedOutputs();
-        ring.show();
-        nextLEDTime = millis() + 1000 / LED_FREQUENZ;
-      }
-
-      if (millis() > nextObjTime) {
-        uavtalk_request_object(FLIGHTSTATUS_OBJID_005);
-        nextObjTime = millis() + 1000;
-        Serial.print("osd_armed "); Serial.println(osd_armed);
-        Serial.print("osd_mode "); Serial.println(osd_mode); 
-        Serial.print("gcstelemetrystatus "); Serial.println(gcstelemetrystatus);
-        // Serial.print("op_alarm "); Serial.println(op_alarm); 
-        Serial.print("stab_alarm "); Serial.println(stab_alarm); 
-      }
-      
-      break;
-   }
+  if (millis() > nextObjTime) {
+    uavtalk_request_object(FLIGHTSTATUS_OBJID_005);
+    nextObjTime = millis() + UAV_FREQUENCY; // UAV talk frequency;
+    if (debug) printLogs();
+  }
 }
 
-static uavtalk_message_t msg;
 void serialEvent1(){
   // grabbing data
   while (Serial1.available() > 0) {
@@ -114,6 +70,13 @@ void serialEvent1(){
   }
 }
 
+void printLogs() {
+  Serial.print("osd_armed "); Serial.println(osd_armed);
+  Serial.print("osd_mode "); Serial.println(osd_mode); 
+  Serial.print("gcstelemetrystatus "); Serial.println(gcstelemetrystatus);
+  // Serial.print("op_alarm "); Serial.println(op_alarm); 
+  Serial.print("stab_alarm "); Serial.println(stab_alarm); 
+}
 
 void checkLeds() {
   setAllLeds(RED);
