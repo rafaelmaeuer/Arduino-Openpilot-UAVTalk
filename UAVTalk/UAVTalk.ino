@@ -108,37 +108,37 @@ void uavtalk_send_msg(uavtalk_message_t *msg) {
 		return;
 	
 	c = (uint8_t) (msg->Sync);
-	Serial.write(c);
+	Serial1.write(c);
 	msg->Crc = crc_table[0 ^ c];
 	c = (uint8_t) (msg->MsgType);
-	Serial.write(c);
+	Serial1.write(c);
 	msg->Crc = crc_table[msg->Crc ^ c];
 	c = (uint8_t) (msg->Length & 0xff);
-	Serial.write(c);
+	Serial1.write(c);
 	msg->Crc = crc_table[msg->Crc ^ c];
 	c = (uint8_t) ((msg->Length >> 8) & 0xff);
-	Serial.write(c);
+	Serial1.write(c);
 	msg->Crc = crc_table[msg->Crc ^ c];
 	c = (uint8_t) (msg->ObjID & 0xff);
-	Serial.write(c);
+	Serial1.write(c);
 	msg->Crc = crc_table[msg->Crc ^ c];
 	c = (uint8_t) ((msg->ObjID >> 8) & 0xff);
-	Serial.write(c);
+	Serial1.write(c);
 	msg->Crc = crc_table[msg->Crc ^ c];
 	c = (uint8_t) ((msg->ObjID >> 16) & 0xff);
-	Serial.write(c);
+	Serial1.write(c);
 	msg->Crc = crc_table[msg->Crc ^ c];
 	c = (uint8_t) ((msg->ObjID >> 24) & 0xff);
-	Serial.write(c);
+	Serial1.write(c);
 	msg->Crc = crc_table[msg->Crc ^ c];
 
 #if defined VERSION_RELEASE_12_10_1 || defined VERSION_RELEASE_12_10_2 || defined VERSION_RELEASE_13_06_1 || defined VERSION_RELEASE_13_06_2
 #else
 	c = 0; //(uint8_t) (msg->InstID & 0xff);
-	Serial.write(c);
+	Serial1.write(c);
 	msg->Crc = crc_table[msg->Crc ^ c];
 	c = 0; //(uint8_t) ((msg->InstID >> 8) & 0xff);
-	Serial.write(c);
+	Serial1.write(c);
 	msg->Crc = crc_table[msg->Crc ^ c];
 #endif
         
@@ -146,11 +146,11 @@ void uavtalk_send_msg(uavtalk_message_t *msg) {
 	  d = msg->Data;
 	  for (i=0; i<msg->Length-HEADER_LEN; i++) {
 		c = *d++;
-		Serial.write(c);
+		Serial1.write(c);
 		msg->Crc = crc_table[msg->Crc ^ c];
           }
 	}
-	Serial.write(msg->Crc);
+	Serial1.write(msg->Crc);
 }
 
 

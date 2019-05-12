@@ -37,7 +37,8 @@ long nextLEDTime = 0;
 long nextObjTime = 0;
 
 void setup() {
-  Serial.begin(BAUDRATE);
+  Serial.begin(BAUDRATE); // serial on USB
+  Serial1.begin(BAUDRATE); // serial on 0(RX) and 1(TX)
   ring.begin();
   ring.show(); // Initialize all pixels to 'off'
   ring.setBrightness(100);
@@ -103,10 +104,10 @@ void loop() {
 }
 
 static uavtalk_message_t msg;
-void serialEvent(){
+void serialEvent1(){
   // grabbing data
-  while (Serial.available() > 0) {
-    uint8_t c = Serial.read();
+  while (Serial1.available() > 0) {
+    uint8_t c = Serial1.read();
     if (uavtalk_parse_char(c, &msg)) {
       uavtalk_read(&msg);
     }
