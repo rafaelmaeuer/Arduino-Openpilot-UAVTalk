@@ -1,4 +1,5 @@
-#include "UAVTalk.h"
+#include "../lib/UAVTalk/UAVTalk.h"
+#include "../lib/UAVTalk/UAVTalk.cpp"
 #include <Adafruit_NeoPixel.h>
 
 #define BAUDRATE 57600

@@ -29,9 +29,8 @@
 #ifndef UAVTALK_H_
 #define UAVTALK_H_
 
-
-#include "OSD_Config.h"
 #include <Arduino.h>
+#include "../OSD/OSD_Config.h"
 
 
 // TODO enhancement:

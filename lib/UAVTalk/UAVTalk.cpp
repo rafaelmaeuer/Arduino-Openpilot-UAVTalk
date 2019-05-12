@@ -1,7 +1,7 @@
 /**
  ******************************************************************************
  *
- * @file       UAVTalk.ino
+ * @file       UAVTalk.cpp
  * @author     Joerg-D. Rothfuchs
  * @brief      Implements a subset of the telemetry communication between
  * 	       OpenPilot CC, CC3D, Revolution and Ardupilot Mega MinimOSD
@@ -24,9 +24,10 @@
  * with this program; if not, see <http://www.gnu.org/licenses/> or write to the 
  * Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
+#include <Arduino.h>
 #include "UAVTalk.h"
-#include "OSD_Vars.h"
-#include "OSD_Config.h"
+#include "../OSD/OSD_Vars.h"
+#include "../OSD/OSD_Config.h"
 
 #ifdef PROTOCOL_UAVTALK
 
