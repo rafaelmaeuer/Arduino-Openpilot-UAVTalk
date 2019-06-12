@@ -13,7 +13,7 @@
 #define PIXEL 1
 #define LED_INTERVAL 250
 #define LED_FREQUENZ 50  // 50HZ
-#define LED_BRIGHTNESS 10 // 0 (min) - 255 (max)
+#define LED_BRIGHTNESS 20 // 0 (min) - 255 (max)
 
 Adafruit_NeoPixel ring = Adafruit_NeoPixel(PIXEL, STATUS_LED, NEO_GRB + NEO_KHZ800);
 
@@ -32,7 +32,7 @@ const uint32_t SKY_BLUE = ring.Color(135,206,255);
 const uint32_t MAIZE = ring.Color(128,158,10);
 const uint32_t LAVENDER = ring.Color(88,2,163);
 const uint32_t SEA_FOAM = ring.Color(32,178,170);
-const uint32_t SPleds = ring.Color(102,205,0);
+const uint32_t KELLY_GREEN = ring.Color(102,205,0);
 const uint32_t DARK_ORANGE = ring.Color(237,180,6);
 const uint32_t ORANGE = ring.Color(237,120,6);
 const uint32_t WHITE = ring.Color(255,255,255);
@@ -98,12 +98,10 @@ void initLEDs() {
   LEDon(POWER_LED);
   LEDon(FLIGHT_LED);
   setAllLeds(WHITE);
-  ring.show();
   delay(LED_INTERVAL * 2);
   LEDoff(POWER_LED);
   LEDoff(FLIGHT_LED);
   setAllLeds(BLACK);
-  ring.show();
   delay(LED_INTERVAL);
 }
 
@@ -138,7 +136,8 @@ void LEDblink(int LED, int interval) {
 void setAllLeds(unsigned long new_color) {
   for (int i=0; i < PIXEL; i++){
     ring.setPixelColor(i, new_color);
-  } 
+  }
+  ring.show();
 }
 
 void setLedOutputs() {
@@ -174,27 +173,27 @@ void setLedOutputs() {
   //  }
 
    // yaw
-   uint32_t value = (osd_yaw + 180) * 25 / 36; // 0 - 255
-   if (value > 255) {
-     value = 255;
-   }
-   uint32_t color =  value;
-   ring.setPixelColor(1, color);
+  //  uint32_t value = (osd_yaw + 180) * 25 / 36; // 0 - 255
+  //  if (value > 255) {
+  //    value = 255;
+  //  }
+  //  uint32_t color =  value;
+  //  ring.setPixelColor(1, color);
    
    // throttle (0-100)
-   value = osd_throttle;   // works well, if Flight Telemetry Update Period is set to 300ms in GCS
-   value = value * 2.55;
-   color = value << 16;    // red
-   ring.setPixelColor(2, color);
+  //  value = osd_throttle;   // works well, if Flight Telemetry Update Period is set to 300ms in GCS
+  //  value = value * 2.55;
+  //  color = value << 16;    // red
+  //  ring.setPixelColor(2, color);
 
    // flight mode
    if (osd_mode == 1) {
-     ring.setPixelColor(3, GREEN); // green
+     setAllLeds(GREEN); // green
    } else if (osd_mode == 2) {
-     ring.setPixelColor(3, YELLOW); // yellow
+     setAllLeds(YELLOW); // yellow
    } else if (osd_mode == 3) {
-     ring.setPixelColor(3, RED); // red
+     setAllLeds(RED); // red
    } else {
-     ring.setPixelColor(3, LAVENDER); // 
-   }  
+     setAllLeds(LAVENDER); // 
+   }
 }
