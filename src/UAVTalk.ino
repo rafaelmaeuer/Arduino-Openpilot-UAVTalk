@@ -55,15 +55,43 @@ void setup() {
 void loop() {
   if (millis() > nextLEDTime) {
     setLedOutputs();
-    ring.show();
     nextLEDTime = millis() + LED_UPDATE; // LED udpate frequency;
   }
 
   if (millis() > nextObjTime) {
-    uavtalk_request_object(FLIGHTSTATUS_OBJID_005);
+    // uavtalk_request_object(FLIGHTSTATUS_OBJID_005);
+    // uavtalk_request_object(ATTITUDESTATE_OBJID);
+    // uavtalk_request_object(MANUALCONTROLCOMMAND_OBJID);
+    // uavtalk_request_object(MANUALCONTROLCOMMAND_OBJID_META);
     nextObjTime = millis() + UAV_FREQUENCY; // UAV talk frequency;
     if (debug) printLogs();
+    updateCommand();
+    // Serial.println(FLIGHTSTATUS_OBJID_005);
+    // Serial.print(msg.ObjID);
+    // Serial.print(": ");
+    // for (int i=0; i<255; i++) {
+    //   Serial.print(msg.Data[i]);
+    // }
   }
+}
+
+void updateCommand() {
+  if (osd_chan7_raw > 1000) {
+    // msg.Data[MANUALCONTROLCOMMAND_OBJID_META] = 1;
+    // msg.ObjID = MANUALCONTROLCOMMAND_OBJID_META;
+    // msg.Data[MANUALCONTROLCOMMAND_OBJID_META_ACCESS] = 1;
+    // uavtalk_send_manualcontrolcommand();
+    // access_readwrite = false;
+    // osd_throttle=10;
+    // osd_yaw++;
+  } else {
+    // msg.ObjID = MANUALCONTROLCOMMAND_OBJID_META;
+    // msg.Data[MANUALCONTROLCOMMAND_OBJID_META_ACCESS] = 0;
+    // access_readwrite = true;
+  }
+  // uavtalk_send_msg(&msg);
+  // uavtalk_request_object(MANUALCONTROLCOMMAND_OBJID_META);
+  
 }
 
 void serialEvent1(){
@@ -78,11 +106,22 @@ void serialEvent1(){
 
 void printLogs() {
   Serial.println("");
+  Serial.print("access_readonly "); Serial.println(access_readonly);
+
   Serial.print("osd_armed "); Serial.println(osd_armed);
-  Serial.print("osd_mode "); Serial.println(osd_mode); 
-  Serial.print("gcstelemetrystatus "); Serial.println(gcstelemetrystatus);
-  // Serial.print("op_alarm "); Serial.println(op_alarm); 
-  Serial.print("stab_alarm "); Serial.println(stab_alarm); 
+  Serial.print("osd_mode "); Serial.println(osd_mode);
+  // Serial.print("gcstelemetrystatus "); Serial.println(gcstelemetrystatus);
+  // Serial.print("op_alarm "); Serial.println(op_alarm);
+  Serial.print("stab_alarm "); Serial.println(stab_alarm);
+
+  // Serial.print("osd_roll "); Serial.println(osd_roll);
+  // Serial.print("osd_pitch "); Serial.println(osd_pitch);
+  // Serial.print("osd_yaw "); Serial.println(osd_yaw);
+  Serial.print("osd_throttle "); Serial.println(osd_throttle);
+
+  // Serial.print("chan1_raw "); Serial.println(chan1_raw);
+  // Serial.print("chan2_raw "); Serial.println(chan2_raw);
+  Serial.print("osd_chan7_raw "); Serial.println(osd_chan7_raw);
 }
 
 void setupLEDs() {

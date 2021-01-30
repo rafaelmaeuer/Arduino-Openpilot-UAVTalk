@@ -368,6 +368,9 @@ int uavtalk_read(uavtalk_message_t *msg) {
         				osd_armed		= uavtalk_get_int8(msg, FLIGHTSTATUS_OBJ_ARMED);
         				osd_mode		= uavtalk_get_int8(msg, FLIGHTSTATUS_OBJ_FLIGHTMODE);
 				break;
+				case MANUALCONTROLCOMMAND_OBJID_META:
+					access_readonly = uavtalk_get_int16(msg, MANUALCONTROLCOMMAND_OBJID_META_ACCESS);
+				break;
 				case MANUALCONTROLCOMMAND_OBJID:
 #ifdef VERSION_ADDITIONAL_UAVOBJID
 				case MANUALCONTROLCOMMAND_OBJID_001:
@@ -385,9 +388,10 @@ int uavtalk_read(uavtalk_message_t *msg) {
                                         // In OPOSD:
                                         // chanx_raw     used for menu navigation (Roll/pitch)
                                         // osd_chanx_raw used for panel navigation (Accessory)
-          chan1_raw		= uavtalk_get_int16(msg, MANUALCONTROLCOMMAND_OBJ_CHANNEL_1);
+          			chan1_raw		= uavtalk_get_int16(msg, MANUALCONTROLCOMMAND_OBJ_CHANNEL_1);
 					chan2_raw		= uavtalk_get_int16(msg, MANUALCONTROLCOMMAND_OBJ_CHANNEL_2);
-					osd_chan5_raw		= uavtalk_get_int16(msg, MANUALCONTROLCOMMAND_OBJ_CHANNEL_4);
+					chan3_raw		= uavtalk_get_int16(msg, MANUALCONTROLCOMMAND_OBJ_CHANNEL_3);
+					osd_chan5_raw		= uavtalk_get_int16(msg, MANUALCONTROLCOMMAND_OBJ_CHANNEL_5);
 					osd_chan6_raw		= uavtalk_get_int16(msg, MANUALCONTROLCOMMAND_OBJ_CHANNEL_6);
 					osd_chan7_raw		= uavtalk_get_int16(msg, MANUALCONTROLCOMMAND_OBJ_CHANNEL_7);
 					osd_chan8_raw		= uavtalk_get_int16(msg, MANUALCONTROLCOMMAND_OBJ_CHANNEL_8);

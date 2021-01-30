@@ -10,9 +10,12 @@ static uint8_t      panel = 0;                      // active panel: 0 = first p
 
 static int16_t      chan1_raw = 0;
 static int16_t      chan2_raw = 0;
+static int16_t      chan3_raw = 0;
 
 static uint8_t      ch_toggle = 0;
 static boolean      switch_mode = false;
+
+static int16_t      access_readonly = 0;
 
 static uint8_t      overspeed = 0;
 static uint8_t      stall = 0;
@@ -37,7 +40,7 @@ static float        osd_heading = 0;                // ground course heading
 
 static int16_t      osd_roll = 0;                   // roll from FC
 static int16_t      osd_pitch = 0;                  // pitch from FC
-static int16_t      osd_yaw = 0;                    // relative heading form FC
+static int16_t      osd_yaw = 0;                    // relative heading from FC
 static uint16_t     osd_throttle = 0;               // throttle
 
 static uint8_t      osd_alt_cnt = 0;                // counter for stable osd_alt
